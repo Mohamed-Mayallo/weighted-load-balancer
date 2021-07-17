@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+    depends_on:
+      - node1
+      - node2
+    ports:
+      - '8080:8080'
+    networks:
+      - my-app
+  node1:
+    container_name: node1
+    image: node:12.13-alpine
+    build:
+      context: ./
+      dockerfile: node.dockerfile
+    environment:
+      PORT: 3000
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - my-app
+  node2:
+    container_name: node2
+    image: node:12.13-alpine
+    build:
+      context: ./
+      dockerfile: node.dockerfile
+    environment:
+      PORT: 3001
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - my-app
+networks:
+  my-app:
+    driver: bridge
